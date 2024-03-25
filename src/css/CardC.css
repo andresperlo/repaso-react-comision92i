@@ -1,0 +1,16 @@
+.card-pricipal img {
+  height: 30vh;
+  object-fit: cover;
+}
+
+.card-title-principal {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-desc {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
