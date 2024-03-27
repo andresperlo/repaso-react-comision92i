@@ -1,10 +1,10 @@
-import CarouselC from "../components/CarouselC";
-import CardC from "../components/CardC";
-import { Col, Container, Row } from "react-bootstrap";
 import {
   useEffect,
   useState,
 } from "react"; /* use - Hooks - Metodos = Funciones */
+import CarouselC from "../components/CarouselC";
+import CardC from "../components/CardC";
+import { Col, Container, Row } from "react-bootstrap";
 import FooterC from "../components/FooterC";
 import PaginationC from "../components/PaginationC";
 import { titlePage } from "../helpers/titlePage";
@@ -37,6 +37,7 @@ const HomePage = () => {
                 imgCard={product.image}
                 titleCard={product.title}
                 descCard={product.description}
+                idProduct={product.id}
               />
             </Col>
           ))}

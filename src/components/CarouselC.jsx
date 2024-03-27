@@ -1,5 +1,6 @@
 import Carousel from "react-bootstrap/Carousel";
 import ImageC from "./ImageC";
+import "../css/Carousel.css";
 
 const CarouselC = () => {
   return (
