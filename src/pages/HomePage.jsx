@@ -14,8 +14,9 @@ const HomePage = () => {
   const [products, setProducts] = useState([]);
 
   const getProductFakeStore = async () => {
-    const data = await useApi();
-    setProducts(data);
+    const productos = await fetch("http://localhost:3001/api/products");
+    const data = await productos.json();
+    setProducts(data.products);
   };
 
   useEffect(() => {
@@ -34,10 +35,10 @@ const HomePage = () => {
           {products.map((product) => (
             <Col sm="12" md="6" lg="4" key={product.id} className="my-2 mt-5">
               <CardC
-                imgCard={product.image}
-                titleCard={product.title}
-                descCard={product.description}
-                idProduct={product.id}
+                imgCard={product.imagen}
+                titleCard={product.nombre}
+                descCard={product.precio}
+                idProduct={product._id}
               />
             </Col>
           ))}

@@ -9,8 +9,9 @@ const ProductPage = () => {
   const [product, setProduct] = useState({});
 
   const getOneProduct = async () => {
-    const data = await useApi(id);
-    setProduct(data);
+    const producto = await fetch(`http://localhost:3001/api/products/${id}`);
+    const data = await producto.json();
+    setProduct(data.product);
   };
 
   useEffect(() => {
@@ -22,8 +23,8 @@ const ProductPage = () => {
       <div className="d-flex justify-content-center mt-5 align-items-center">
         <div className="w-25 me-5">
           <ImageC
-            urlImage={product.image}
-            textAlt={product.title}
+            urlImage={product.imagen}
+            textAlt={product.nombre}
             widImg={"100%"}
           />
         </div>
