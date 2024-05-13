@@ -8,7 +8,7 @@ const LoginPage = () => {
   }, []);
   return (
     <>
-      <FormC />
+      <FormC idPage={"login"} />
     </>
   );
 };

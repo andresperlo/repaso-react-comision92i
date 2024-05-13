@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import TableC from "../components/TableC";
 import { useApi } from "../helpers/useApi";
+import clienteAxios from "../helpers/clientAxios";
 
 const AdminProductsPage = (idPage) => {
-  const [products, setProduct] = useState([]);
+  const [products, setProducts] = useState([]);
 
   const getAllProducts = async () => {
-    const allProducts = await useApi();
-    console.log(allProducts);
-    setProduct(allProducts);
+    const getProducts = await clienteAxios.get("/products");
+    setProducts(getProducts.data.products);
   };
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const AdminProductsPage = (idPage) => {
 
   return (
     <>
-      <TableC array={products} idPage={"adminProducts"} />
+      <TableC array={products} idPage={"adminProducts"} idPageP={idPage} />
     </>
   );
 };

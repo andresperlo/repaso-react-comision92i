@@ -9,14 +9,14 @@ import FooterC from "../components/FooterC";
 import PaginationC from "../components/PaginationC";
 import { titlePage } from "../helpers/titlePage";
 import { useApi } from "../helpers/useApi";
+import clienteAxios, { configHeader } from "../helpers/clientAxios";
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
 
   const getProductFakeStore = async () => {
-    const productos = await fetch("http://localhost:3001/api/products");
-    const data = await productos.json();
-    setProducts(data.products);
+    const productos = await clienteAxios.get("/products");
+    setProducts(productos.data.products);
   };
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const HomePage = () => {
       <Container>
         <Row>
           {products.map((product) => (
-            <Col sm="12" md="6" lg="4" key={product.id} className="my-2 mt-5">
+            <Col sm="12" md="6" lg="4" key={product._id} className="my-2 mt-5">
               <CardC
                 imgCard={product.imagen}
                 titleCard={product.nombre}

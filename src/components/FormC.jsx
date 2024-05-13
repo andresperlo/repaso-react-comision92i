@@ -1,8 +1,12 @@
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import clienteAxios, { configHeader } from "../helpers/clientAxios";
+import { Link, useNavigate } from "react-router-dom";
 
 const FormC = ({ idPage }) => {
+  const navigate = useNavigate();
+  const [recoveryPass, setRecoveryPass] = useState(null);
   const [register, setRegister] = useState({
     user: "",
     email: "",
@@ -26,23 +30,19 @@ const FormC = ({ idPage }) => {
   const handleClickRegister = async (ev) => {
     ev.preventDefault();
     if (register.pass === register.rpass) {
-      const registerUser = await fetch(
-        "http://localhost:3001/api/users/register",
+      const registerUser = await clienteAxios.post(
+        "/users/register",
         {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            nombreUsuario: register.user,
-            emailUsuario: register.email,
-            contrasenia: register.pass,
-          }),
-        }
+          nombreUsuario: register.user,
+          emailUsuario: register.email,
+          contrasenia: register.pass,
+        },
+        configHeader
       );
+
       if (registerUser.status === 201) {
         alert("Usuario creado con exito");
-        location.href = "/sign-in";
+        navigate("/sign-in");
       }
     } else {
       alert("las contraseñas no coinciden");
@@ -51,27 +51,36 @@ const FormC = ({ idPage }) => {
 
   const handleClickLogin = async (ev) => {
     ev.preventDefault();
-    const loginUser = await fetch("http://localhost:3001/api/users/login", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
+    console.log(login);
+    const loginUser = await clienteAxios.post(
+      "/users/login",
+      {
         nombreUsuario: login.user,
         contrasenia: login.pass,
-      }),
-    });
+      },
+      configHeader
+    );
 
     if (loginUser.status === 200) {
-      const data = await loginUser.json();
-      sessionStorage.setItem("token", JSON.stringify(data.token));
-      sessionStorage.setItem("role", JSON.stringify(data.role));
+      sessionStorage.setItem("token", JSON.stringify(loginUser.data.token));
+      sessionStorage.setItem("role", JSON.stringify(loginUser.data.role));
 
-      if (data.role === "admin") {
-        location.href = "/home-admin";
+      if (loginUser.data.role === "admin") {
+        navigate("/home-admin");
       } else {
-        location.href = "/";
+        navigate("/");
       }
+    }
+  };
+
+  const mailRecoveryPass = async (ev) => {
+    ev.preventDefault();
+    const recovery = await clienteAxios.post("/users/recoveryPass", {
+      emailUsuario: recoveryPass,
+    });
+
+    if (recovery.status === 200) {
+      alert("el mail fue enviado");
     }
   };
 
@@ -80,13 +89,19 @@ const FormC = ({ idPage }) => {
       <div className="d-flex justify-content-center mt-5">
         <Form className="w-25">
           <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Usuario</Form.Label>
+            <Form.Label>
+              {idPage === "recoveryPass" ? "  " : "Usuario"}
+            </Form.Label>
             <Form.Control
               type="text"
               placeholder="Enter email"
-              name="user"
-              onChange={
-                idPage === "register" ? handleChangeReg : handleChangeLog
+              name={idPage === "recoveryPass" ? "emailUsuario" : "user"}
+              onChange={(ev) =>
+                idPage === "register"
+                  ? handleChangeReg(ev)
+                  : idPage === "recoveryPass"
+                  ? setRecoveryPass(ev.target.value)
+                  : handleChangeLog(ev)
               }
             />
           </Form.Group>
@@ -103,17 +118,25 @@ const FormC = ({ idPage }) => {
             </Form.Group>
           )}
 
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Contraseña</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              name="pass"
-              onChange={
-                idPage === "register" ? handleChangeReg : handleChangeLog
-              }
-            />
-          </Form.Group>
+          {idPage !== "recoveryPass" && (
+            <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Label>Contraseña</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Password"
+                name="pass"
+                onChange={
+                  idPage === "register" ? handleChangeReg : handleChangeLog
+                }
+              />
+              {idPage === "login" && (
+                <p className="text-center">
+                  Si olvidaste tu contraseña. Haz click
+                  <Link to="/recoveryPass">aqui</Link>
+                </p>
+              )}
+            </Form.Group>
+          )}
 
           {idPage === "register" && (
             <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -133,10 +156,18 @@ const FormC = ({ idPage }) => {
               type="submit"
               className="w-75"
               onClick={
-                idPage === "register" ? handleClickRegister : handleClickLogin
+                idPage === "register"
+                  ? handleClickRegister
+                  : idPage === "recoveryPass"
+                  ? mailRecoveryPass
+                  : handleClickLogin
               }
             >
-              {idPage === "register" ? " Enviar Formulario" : "Iniciar"}
+              {idPage === "register"
+                ? " Enviar Formulario"
+                : idPage === "recoveryPass"
+                ? "Enviar Correo"
+                : "Iniciar"}
             </Button>
           </Form.Group>
         </Form>

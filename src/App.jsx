@@ -6,8 +6,8 @@ import NavbarC from "./components/NavbarC";
 const App = () => {
   return (
     <>
-      <NavbarC />
       <BrowserRouter>
+        <NavbarC />
         <RViews />
       </BrowserRouter>
     </>
