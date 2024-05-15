@@ -3,6 +3,7 @@ import { useApi } from "../helpers/useApi";
 import { useEffect, useState } from "react";
 import ImageC from "../components/ImageC";
 import { titlePage } from "../helpers/titlePage";
+import clienteAxios, { configHeader } from "../helpers/clientAxios";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -11,9 +12,8 @@ const ProductPage = () => {
 
   const getOneProduct = async () => {
     const navigate = useNavigate();
-    const producto = await fetch(`http://localhost:3001/api/products/${id}`);
-    const data = await producto.json();
-    setProduct(data.product);
+    const producto = await clienteAxios.get(`/products/${id}`);
+    setProduct(producto.data.product);
   };
 
   const addProdFav = async () => {
@@ -25,21 +25,14 @@ const ProductPage = () => {
       navigate("/sign-in");
     }
 
-    const productoAgregadoFavorito = await fetch(
-      `http://localhost:3001/api/favs/${id}`,
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          auth: `Bearer ${token}`,
-        },
-      }
+    const productoAgregadoFavorito = await clienteAxios.post(
+      `/favs/${id}`,
+      {},
+      configHeader
     );
 
-    const data = await productoAgregadoFavorito.json();
-
     if (productoAgregadoFavorito.status === 200) {
-      alert(`${data.msg}`);
+      alert(`${productoAgregadoFavorito.data.msg}`);
     }
   };
 
@@ -50,21 +43,14 @@ const ProductPage = () => {
       navigate("/sign-in");
     }
 
-    const productoAgregadoCarrito = await fetch(
-      `http://localhost:3001/api/carts/${id}`,
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          auth: `Bearer ${token}`,
-        },
-      }
+    const productoAgregadoCarrito = await clienteAxios.post(
+      `/carts/${id}`,
+      {},
+      configHeader
     );
 
-    const data = await productoAgregadoCarrito.json();
-
     if (productoAgregadoCarrito.status === 200) {
-      alert(`${data.msg}`);
+      alert(`${productoAgregadoCarrito.data.msg}`);
     }
   };
 
